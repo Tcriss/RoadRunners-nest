@@ -1,8 +1,9 @@
-import { Column } from "typeorm";
+import { Column, Entity } from "typeorm";
 import { Base } from "src/common/entities/base.entity";
 import { IVehicle } from "src/common/interfaces";
-import { Image, Seller } from "./";
+import { Image, Seller } from ".";
 
+@Entity('vehicles')
 export class Vehicle extends Base implements IVehicle {
     @Column((type) => Image)
     portrait: Image;
