@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, ObjectId, Repository, UpdateResult } from 'typeorm';
-import { Vehicle } from '../entities';
+
 import { CreateVehicleDto, DetailsVehicleDto, EditVehicleDto, ListVehiclesDto } from '../dto';
+import { Vehicle } from '../entities';
+import { listVehicleData, getVehicleData } from '../utils/';
 
 @Injectable()
 export class VehicleService {
@@ -10,11 +12,13 @@ export class VehicleService {
     constructor(@InjectRepository(Vehicle) private vehicleRepositoy: Repository<Vehicle>) {}
 
     public async findAllVehicles(): Promise<ListVehiclesDto[]> {
-        return await this.vehicleRepositoy.find();
+        return await this.vehicleRepositoy.find({
+            select: listVehicleData
+        });
     }
 
     public async findOneVehicle(id: ObjectId): Promise<DetailsVehicleDto> {
-        const vehicle: DetailsVehicleDto = await this.vehicleRepositoy.findOneBy({_id: id});
+        const vehicle: DetailsVehicleDto = await this.vehicleRepositoy.findOne({where: {_id: id}, select: getVehicleData});
 
         if (!vehicle) throw new HttpException('Vehicle not found', HttpStatus.NOT_FOUND);
 

@@ -1,11 +1,45 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { AuthService } from '../services/auth.service';
+import { Reflector } from '@nestjs/core';
+import { PUBLIC_KEY } from 'src/common/constants/public-access.key';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+
+  constructor(private readonly reflector: Reflector, private readonly authService: AuthService) {}
+
+  private async extractTokenFromHeader(headers: Headers): Promise<string> {
+    if (!headers['authorization']) throw new HttpException("Couldn't get token, property authorization is missing in headers", HttpStatus.BAD_REQUEST);
+
+    const [type, token]: string = headers['authorization'].split(' ');
+
+    if (type !== 'Bearer') throw new HttpException('Invalid format token', HttpStatus.BAD_REQUEST);
+    if (!token) throw new HttpException('Token is missing', HttpStatus.UNAUTHORIZED);
+    
+    return token; 
+  }
+
+  private async verifyToken(token: string): Promise<unknown> {
+    return await this.authService.verifyToken(token);
+  }
+
+  private async isVerified(context: ExecutionContext): Promise<boolean> {
+    const req: Request = context.switchToHttp().getRequest();
+    const token: string = await this.extractTokenFromHeader(req.headers);
+    const payload = await this.verifyToken(token);
+
+    req['user'] = payload;
+
     return true;
+  }
+
+  public async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
+      context.getHandler(), context.getClass()
+    ]);
+
+    if (isPublic) return true;
+    
+    return await this.isVerified(context);
   }
 }

@@ -1,23 +1,27 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { CreateVehicleDto, DetailsVehicleDto, EditVehicleDto, ListVehiclesDto } from '../dto';
-import { VehicleService } from '../services/vehicle.service';
 import { ObjectId } from 'typeorm';
+
+import { CreateVehicleDto, DetailsVehicleDto, EditVehicleDto, ListVehiclesDto } from '../dto';
+import { PublicAccess } from 'src/common/decorators/public-access.decorator';
+import { VehicleService } from '../services/vehicle.service';
 
 @Controller('vehicles')
 export class VehicleController {
 
     constructor(private vehicleService: VehicleService) {}
 
+    @PublicAccess()
     @Get()
     findAll(): Promise<ListVehiclesDto[]> {
         return this.vehicleService.findAllVehicles();
     }
 
+    @PublicAccess()
     @Get(':id')
     findOne(@Param('id') id: ObjectId): Promise<DetailsVehicleDto> {
         return this.vehicleService.findOneVehicle(id);
     }
-
+    
     @Post('create')
     create(@Body() vehicle :CreateVehicleDto): Promise<string> {
         return this.vehicleService.createVehicle(vehicle);
