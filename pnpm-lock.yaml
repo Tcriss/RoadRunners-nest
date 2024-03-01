@@ -35,6 +35,9 @@ dependencies:
   class-validator:
     specifier: ^0.14.1
     version: 0.14.1
+  cloudinary:
+    specifier: ^2.0.1
+    version: 2.0.1
   mongodb:
     specifier: ^6.3.0
     version: 6.3.0
@@ -2191,6 +2194,14 @@ packages:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
     dev: true
+
+  /cloudinary@2.0.1:
+    resolution: {integrity: sha512-+j5GswtCwjAmLhjs/K26id4Zvh53zL/YWzgyenxgbdXdXmdFM8d5H1FV1sJCkpS77AqylJKBzyztySdILM+F+A==}
+    engines: {node: '>=9'}
+    dependencies:
+      lodash: 4.17.21
+      q: 1.5.1
+    dev: false
 
   /co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
@@ -4572,6 +4583,11 @@ packages:
   /pure-rand@6.0.4:
     resolution: {integrity: sha512-LA0Y9kxMYv47GIPJy6MI84fqTd2HmYZI83W/kM/SkKfDlajnZYfmXFTxkbY+xSBPkLJxltMa9hIkmdc29eguMA==}
     dev: true
+
+  /q@1.5.1:
+    resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
+    engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
+    dev: false
 
   /qs@6.11.2:
     resolution: {integrity: sha512-tDNIz22aBzCDxLtVH++VnTfzxlfeK5CbqohpSqpJgj1Wg/cQbStNAz3NuqCs5vV+pjBsK4x4pN9HlVh7rcYRiA==}
