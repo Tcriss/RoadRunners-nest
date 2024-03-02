@@ -1,9 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ObjectId } from 'typeorm';
 
-import { CreateVehicleDto, DetailsVehicleDto, EditVehicleDto, ListVehiclesDto } from '../dto';
+import { CreateVehicleDto, EditVehicleDto } from '../dto';
 import { PublicAccess } from 'src/common/decorators/public-access.decorator';
 import { VehicleService } from '../services/vehicle.service';
+import { Vehicle } from '../entities';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { filesConfig } from 'src/common/config/files.config';
+import { imageValidations } from '../config/image-validations.config';
 
 @Controller('vehicles')
 export class VehicleController {
@@ -12,19 +16,21 @@ export class VehicleController {
 
     @PublicAccess()
     @Get()
-    findAll(): Promise<ListVehiclesDto[]> {
+    findAll(): Promise<Vehicle[]> {
         return this.vehicleService.findAllVehicles();
     }
 
     @PublicAccess()
     @Get(':id')
-    findOne(@Param('id') id: ObjectId): Promise<DetailsVehicleDto> {
+    findOne(@Param('id') id: ObjectId): Promise<Vehicle> {
         return this.vehicleService.findOneVehicle(id);
     }
     
+    @PublicAccess()
     @Post('create')
-    create(@Body() vehicle :CreateVehicleDto): Promise<string> {
-        return this.vehicleService.createVehicle(vehicle);
+    @UseInterceptors(FilesInterceptor('images', 7))
+    create(@Body() vehicle: CreateVehicleDto, @UploadedFiles(imageValidations) images: Express.Multer.File[]): Promise<string | any> {
+        return this.vehicleService.createVehicle(vehicle, images);
     }
 
     @Put('edit/:id')

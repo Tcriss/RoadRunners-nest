@@ -1,7 +1,7 @@
-import { ISeller, IImage } from "./";
+import { ISeller } from "./";
 
 export interface IVehicle {
-    portrait: IImage,
+    portrait: string,
     owner: string,
     location: string,
     brand: string,
@@ -12,5 +12,5 @@ export interface IVehicle {
     year: string,
     price: number,
     seller: ISeller,
-    images: IImage[]
+    images: string[]
 }

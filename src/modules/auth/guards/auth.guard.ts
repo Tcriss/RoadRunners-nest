@@ -23,8 +23,7 @@ export class AuthGuard implements CanActivate {
     return await this.authService.verifyToken(token);
   }
 
-  private async isVerified(context: ExecutionContext): Promise<boolean> {
-    const req: Request = context.switchToHttp().getRequest();
+  private async checkCredentials(req: Request): Promise<boolean> {
     const token: string = await this.extractTokenFromHeader(req.headers);
     const payload = await this.verifyToken(token);
 
@@ -34,12 +33,13 @@ export class AuthGuard implements CanActivate {
   }
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req: Request = context.switchToHttp().getRequest();
     const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
       context.getHandler(), context.getClass()
     ]);
 
     if (isPublic) return true;
     
-    return await this.isVerified(context);
+    return await this.checkCredentials(req);
   }
 }

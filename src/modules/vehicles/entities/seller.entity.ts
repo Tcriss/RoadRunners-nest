@@ -9,7 +9,7 @@ export class Seller extends Base implements ISeller {
     @Column()
     name: string;
 
-    @Column({unique: true})
+    @Column()
     email: string;
 
     @Column()

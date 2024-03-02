@@ -1,6 +1,6 @@
 
-import { IsNotEmpty, IsString, IsUUID, ValidateNested } from "class-validator";
-import { Image, Seller } from "../entities";
+import { IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { Seller } from "../entities";
 
 export class CreateVehicleDto {
     @IsNotEmpty()
@@ -38,8 +38,4 @@ export class CreateVehicleDto {
     @IsNotEmpty()
     @ValidateNested()
     seller: Seller;
-
-    @IsNotEmpty()
-    @ValidateNested({each: true})
-    images: Image[];
 }
