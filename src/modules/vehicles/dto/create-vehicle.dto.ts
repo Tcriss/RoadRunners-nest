@@ -1,5 +1,5 @@
-
 import { IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
+
 import { Seller } from "../entities";
 
 export class CreateVehicleDto {

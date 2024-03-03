@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { ConnectionProvider } from './connection.provider';
 
 @Module({

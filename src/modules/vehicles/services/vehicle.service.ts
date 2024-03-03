@@ -5,9 +5,9 @@ import { ObjectId } from 'mongodb';
 
 import { Vehicle } from '../entities';
 import { CreateVehicleDto, EditVehicleDto } from '../dto';
-import { listVehicleData, getVehicleData } from '../utils/';
 import { CloudinaryService } from 'src/modules/cloudinary/services/cloudinary.service';
 import { CloudinaryResponse } from 'src/common/types/cloudinary.type';
+import { listVehicleData, getVehicleData } from '../utils/';
 
 @Injectable()
 export class VehicleService {

@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
 import { Reflector } from '@nestjs/core';
+
+import { AuthService } from '../services/auth.service';
 import { PUBLIC_KEY } from 'src/common/constants/public-access.key';
 
 @Injectable()

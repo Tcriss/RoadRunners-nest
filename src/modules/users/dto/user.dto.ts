@@ -1,4 +1,5 @@
 import { IsEmail, IsOptional, IsString } from "class-validator";
+
 import { IUser } from "src/common/interfaces";
 
 export class EditUser implements IUser {
