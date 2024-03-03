@@ -1,12 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { ObjectId } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 import { CreateVehicleDto, EditVehicleDto } from '../dto';
 import { PublicAccess } from 'src/common/decorators/public-access.decorator';
 import { VehicleService } from '../services/vehicle.service';
 import { Vehicle } from '../entities';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { filesConfig } from 'src/common/config/files.config';
 import { imageValidations } from '../config/image-validations.config';
 
 @Controller('vehicles')

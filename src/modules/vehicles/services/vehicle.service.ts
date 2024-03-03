@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, ObjectId, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 import { Vehicle } from '../entities';
 import { CreateVehicleDto, EditVehicleDto } from '../dto';
@@ -24,7 +25,7 @@ export class VehicleService {
     }
 
     public async findOneVehicle(id: ObjectId): Promise<Vehicle> {
-        const vehicle: Vehicle = await this.vehicleRepositoy.findOne({where: {_id: id}, select: getVehicleData});
+        const vehicle: Vehicle = await this.vehicleRepositoy.findOne({where: {_id: new ObjectId(id)}, select: getVehicleData});
 
         if (!vehicle) throw new HttpException('Vehicle not found', HttpStatus.NOT_FOUND);
 
@@ -32,10 +33,12 @@ export class VehicleService {
     }
 
     public async createVehicle(vehicle: CreateVehicleDto, images: Express.Multer.File[]): Promise<string | any> {
-        const uploadRes: CloudinaryResponse = await this.cloudinaryService.uploadFiles(images);
+        const uploadRes: CloudinaryResponse[] = await this.cloudinaryService.uploadFiles(images);
+        const getImages: string[] = [];
 
-        vehicle['portrait'] = uploadRes.url;
-        vehicle['images'] = uploadRes.url;
+        uploadRes.map(file => getImages.push(file.url));
+        vehicle['portrait'] = uploadRes[0].url;
+        vehicle.images = getImages;
 
         const data: Vehicle = this.vehicleRepositoy.create(vehicle);
 

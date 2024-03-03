@@ -1,5 +1,5 @@
 
-import { IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 import { Seller } from "../entities";
 
 export class CreateVehicleDto {
@@ -32,8 +32,12 @@ export class CreateVehicleDto {
     year: string;
     
     @IsNotEmpty()
-    @IsString()
+    @IsNumber()
     price: number;
+
+    @IsOptional()
+    @ValidateNested()
+    images: string[];
 
     @IsNotEmpty()
     @ValidateNested()

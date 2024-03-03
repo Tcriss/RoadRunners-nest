@@ -1,10 +1,14 @@
-import { Column, Entity } from "typeorm";
-import { Base } from "src/common/entities/base.entity";
+import { Column, Entity, ObjectIdColumn } from "typeorm";
+import { ObjectId } from "mongodb";
+
 import { IVehicle } from "src/common/interfaces";
 import { Seller } from ".";
 
 @Entity('vehicles')
-export class Vehicle extends Base implements IVehicle {
+export class Vehicle implements IVehicle {
+    @ObjectIdColumn()
+    _id: ObjectId;
+
     @Column()
     portrait: string;
 

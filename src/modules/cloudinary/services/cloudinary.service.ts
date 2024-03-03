@@ -7,23 +7,29 @@ import { CloudinaryResponse } from 'src/common/types/cloudinary.type';
 @Injectable()
 export class CloudinaryService {
 
-    constructor() {}
+    constructor() { }
 
-    public async uploadFiles(files: Express.Multer.File[]): Promise<CloudinaryResponse> {
+    public async uploadFiles(files: Express.Multer.File[]): Promise<CloudinaryResponse[]> {
         if (!files) throw new BadRequestException('Images are required');
 
-        return new Promise<CloudinaryResponse>((resolve, reject) => {
-            const uploadStream: UploadStream = cloudinary.uploader.upload_stream((err, res) => {
-                if (err) return reject(err);
+        const uploadPromises: Promise<CloudinaryResponse>[] = files.map((file) => {
+            return new Promise<CloudinaryResponse>((resolve, reject) => {
+                const uploadStream: UploadStream = cloudinary.uploader.upload_stream((err, res) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                });
 
-                resolve(res);
+                streamifier.createReadStream(file.buffer).pipe(uploadStream);
             });
-
-            for (let i: number = 0; files.length > i; i++) {
-                streamifier.createReadStream(files[i].buffer).pipe(uploadStream);
-            }
         });
+
+        return await Promise.all(uploadPromises);
     }
 
-    public async findAllFiles() {}
+    public async findAllFiles() { }
+
+    public async deleteFile() { }
 }

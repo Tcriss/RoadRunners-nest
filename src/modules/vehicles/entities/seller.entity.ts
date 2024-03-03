@@ -1,8 +1,12 @@
-import { Column } from "typeorm";
-import { Base } from "src/common/entities/base.entity";
+import { Column, ObjectIdColumn } from "typeorm";
+import { ObjectId } from "mongodb";
+
 import { ISeller } from "src/common/interfaces";
 
-export class Seller extends Base implements ISeller {
+export class Seller implements ISeller {
+    @ObjectIdColumn()
+    _id: ObjectId;
+
     @Column()
     picture: string;
 
