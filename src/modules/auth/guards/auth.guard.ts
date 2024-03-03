@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
     return token; 
   }
 
-  private async verifyToken(token: string): Promise<unknown> {
+  private async verifyToken(token: string): Promise<object> {
     return await this.authService.verifyToken(token);
   }
 

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 
-import { Seller } from "../entities";
+import { Image, Seller } from "../entities";
 
 export class CreateVehicleDto {
     @IsNotEmpty()
@@ -35,11 +35,11 @@ export class CreateVehicleDto {
     @IsNumber()
     price: number;
 
-    @IsOptional()
-    @ValidateNested()
-    images: string[];
-
     @IsNotEmpty()
     @ValidateNested()
     seller: Seller;
+
+    @IsNotEmpty()
+    @ValidateNested()
+    images: Image[];
 }

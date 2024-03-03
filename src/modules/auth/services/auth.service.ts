@@ -5,9 +5,12 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
 
-    constructor(private readonly config: ConfigService,private jwt: JwtService) {}
+    constructor(private readonly config: ConfigService, private jwt: JwtService) {}
 
-    public async verifyToken(token: string): Promise<unknown> {
-        return this.jwt.verifyAsync(token);
+    public async verifyToken(token: string): Promise<object> {
+        return this.jwt.verifyAsync(token, {
+            audience: this.config.get('AUDIENCE'),
+            issuer: this.config.get('A_DOMAIN')
+        });
     }
 }

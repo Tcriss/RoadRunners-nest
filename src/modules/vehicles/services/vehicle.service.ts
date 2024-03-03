@@ -3,10 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ObjectId } from 'mongodb';
 
-import { Vehicle } from '../entities';
+import { Vehicle, Image } from '../entities';
 import { CreateVehicleDto, EditVehicleDto } from '../dto';
 import { CloudinaryService } from 'src/modules/cloudinary/services/cloudinary.service';
-import { CloudinaryResponse } from 'src/common/types/cloudinary.type';
 import { listVehicleData, getVehicleData } from '../utils/';
 
 @Injectable()
@@ -33,15 +32,13 @@ export class VehicleService {
     }
 
     public async createVehicle(vehicle: CreateVehicleDto, images: Express.Multer.File[]): Promise<string | any> {
-        const uploadRes: CloudinaryResponse[] = await this.cloudinaryService.uploadFiles(images);
-        const getImages: string[] = [];
+        const imagesData: Image[] = await this.cloudinaryService.uploadFiles(images);
 
-        uploadRes.map(file => getImages.push(file.url));
-        vehicle['portrait'] = uploadRes[0].url;
-        vehicle.images = getImages;
+        vehicle['portrait'] = imagesData[0];
+        vehicle.images = imagesData;
 
         const data: Vehicle = this.vehicleRepositoy.create(vehicle);
-
+        
         if (!data) throw new HttpException("Couldn't save this vehicle", HttpStatus.NOT_FOUND);
 
         await this.vehicleRepositoy.save(data);
@@ -58,7 +55,7 @@ export class VehicleService {
     }
 
     public async deleteVehcile(id: ObjectId): Promise<void> {
-        const res: DeleteResult = await this.vehicleRepositoy.delete(id);
+        const res: DeleteResult = await this.vehicleRepositoy.delete(new ObjectId(id));
 
         if (res.affected === 0) throw new HttpException('Oops!, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
         if (res.affected === 1) throw new HttpException('User deleted', HttpStatus.OK);

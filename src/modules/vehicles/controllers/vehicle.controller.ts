@@ -25,11 +25,11 @@ export class VehicleController {
         return this.vehicleService.findOneVehicle(id);
     }
     
-    @PublicAccess()
     @Post('create')
     @UseInterceptors(FilesInterceptor('images', 7))
-    create(@Body() vehicle: CreateVehicleDto, @UploadedFiles(imageValidations) images: Express.Multer.File[]): Promise<string | any> {
-        return this.vehicleService.createVehicle(vehicle, images);
+    create(@Body() vehicle: CreateVehicleDto, @UploadedFiles(imageValidations) images: Express.Multer.File[]){
+        console.log('vehicle: ', vehicle);
+        // return this.vehicleService.createVehicle(vehicle, images);
     }
 
     @Put('edit/:id')

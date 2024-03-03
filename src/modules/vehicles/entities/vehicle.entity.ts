@@ -2,7 +2,7 @@ import { Column, Entity, ObjectIdColumn } from "typeorm";
 import { ObjectId } from "mongodb";
 
 import { IVehicle } from "src/common/interfaces";
-import { Seller } from ".";
+import { Seller, Image } from ".";
 
 @Entity('vehicles')
 export class Vehicle implements IVehicle {
@@ -10,7 +10,7 @@ export class Vehicle implements IVehicle {
     _id: ObjectId;
 
     @Column()
-    portrait: string;
+    portrait: Image;
 
     @Column()
     owner: string;
@@ -43,5 +43,5 @@ export class Vehicle implements IVehicle {
     seller: Seller;
 
     @Column()
-    images: string[];
+    images: Image[];
 }
