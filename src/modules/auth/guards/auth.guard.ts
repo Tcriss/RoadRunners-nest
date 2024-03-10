@@ -25,6 +25,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private async checkCredentials(req: Request): Promise<boolean> {
+    console.log(req.headers);6
     const token: string = await this.extractTokenFromHeader(req.headers);
     const payload = await this.verifyToken(token);
 

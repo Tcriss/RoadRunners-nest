@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { VehicleService } from './services/vehicle.service';
 import { VehicleController } from './controllers/vehicle.controller';
 import { Vehicle, Seller, Image } from './entities';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { checkToken } from 'src/common/middlewares/auth0.middleware';
 
 @Module({
   providers: [VehicleService],
@@ -14,4 +15,11 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
     CloudinaryModule
   ]
 })
-export class VehiclesModule {}
+export class VehiclesModule {
+
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(checkToken).exclude(
+      { path: 'Vehicles', method: RequestMethod.GET }
+    )
+  }
+}

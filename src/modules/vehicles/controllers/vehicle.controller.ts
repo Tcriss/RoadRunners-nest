@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { Vehicle } from '../entities';
 import { CreateVehicleDto, EditVehicleDto } from '../dto';
 import { PublicAccess } from 'src/common/decorators/public-access.decorator';
 import { VehicleService } from '../services/vehicle.service';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { imageValidations } from '../config/image-validations.config';
 
 @Controller('vehicles')
@@ -28,8 +28,7 @@ export class VehicleController {
     @Post('create')
     @UseInterceptors(FilesInterceptor('images', 7))
     create(@Body() vehicle: CreateVehicleDto, @UploadedFiles(imageValidations) images: Express.Multer.File[]){
-        console.log('vehicle: ', vehicle);
-        // return this.vehicleService.createVehicle(vehicle, images);
+        return this.vehicleService.createVehicle(vehicle, images);
     }
 
     @Put('edit/:id')

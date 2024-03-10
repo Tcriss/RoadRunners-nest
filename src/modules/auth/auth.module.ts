@@ -8,10 +8,10 @@ import { JwtProvider } from './providers/jwt.provider';
 @Module({
     providers: [
         AuthService,
-        {
-            provide: APP_GUARD,
-            useClass: AuthGuard
-        }
+        // {
+        //     provide: APP_GUARD,
+        //     useClass: AuthGuard
+        // }
     ],
     imports: [JwtProvider],
     exports: [JwtProvider]

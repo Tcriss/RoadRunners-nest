@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ObjectId } from 'mongodb';
 
-import { Vehicle, Image } from '../entities';
+import { Vehicle, Image, Seller } from '../entities';
 import { CreateVehicleDto, EditVehicleDto } from '../dto';
 import { CloudinaryService } from 'src/modules/cloudinary/services/cloudinary.service';
 import { listVehicleData, getVehicleData } from '../utils/';
@@ -33,9 +33,19 @@ export class VehicleService {
 
     public async createVehicle(vehicle: CreateVehicleDto, images: Express.Multer.File[]): Promise<string | any> {
         const imagesData: Image[] = await this.cloudinaryService.uploadFiles(images);
+        const seller: Seller = {
+            _id: new ObjectId(),
+            picture: vehicle.picture,
+            name: vehicle.name,
+            email: vehicle.email,
+            phone: vehicle.phone,
+            whatsapp: vehicle.whatsapp,
+            telegram: vehicle.telegram
+        };
 
         vehicle['portrait'] = imagesData[0];
         vehicle.images = imagesData;
+        vehicle.seller = seller;
 
         const data: Vehicle = this.vehicleRepositoy.create(vehicle);
         
