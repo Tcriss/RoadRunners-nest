@@ -65,9 +65,13 @@ export class VehicleService {
     }
 
     public async deleteVehcile(id: ObjectId): Promise<void> {
+        const vehicle: Vehicle = await this.findOneVehicle(id);
         const res: DeleteResult = await this.vehicleRepositoy.delete(new ObjectId(id));
 
         if (res.affected === 0) throw new HttpException('Oops!, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-        if (res.affected === 1) throw new HttpException('User deleted', HttpStatus.OK);
+        if (res.affected === 1) {
+            vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
+            throw new HttpException('User deleted', HttpStatus.OK);
+        };
     }
 }

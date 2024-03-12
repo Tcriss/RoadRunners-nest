@@ -32,7 +32,7 @@ export class CloudinaryService {
         return await Promise.all(uploadPromises);
     }
 
-    public async findAllFiles() { }
-
-    public async deleteFile() { }
+    public async deleteFile(imageId: string): Promise<void> {
+        cloudinary.uploader.destroy(imageId).then()
+    }
 }
