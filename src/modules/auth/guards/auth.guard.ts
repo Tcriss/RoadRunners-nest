@@ -1,47 +1,46 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
+import { GetVerificationKey, expressjwt as jwt} from 'express-jwt';
+import { expressJwtSecret } from 'jwks-rsa';
+import { promisify } from 'util';
 
-import { AuthService } from '../services/auth.service';
-import { PUBLIC_KEY } from 'src/common/constants/public-access.key';
+import { PUBLIC_KEY } from '../../../common/constans/public-access.key';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-  constructor(private readonly reflector: Reflector, private readonly authService: AuthService) {}
+  constructor(private config: ConfigService, private reflector: Reflector) {}
 
-  private async extractTokenFromHeader(headers: Headers): Promise<string> {
-    if (!headers['authorization']) throw new HttpException("Couldn't get token, property authorization is missing in headers", HttpStatus.BAD_REQUEST);
+  private async verify(req: any | Response, res: any | Response): Promise<boolean> {
+    const checkJwt = promisify(jwt({
+      secret: expressJwtSecret({
+          cache: true,
+          rateLimit: true,
+          jwksRequestsPerMinute: 5,
+          jwksUri: `${this.config.get('A_DOMAIN')}.well-known/jwks.json`
+      }) as GetVerificationKey,
+      audience: this.config.get('AUDIENCE'),
+      algorithms: ['RS256']
+    }));
 
-    const [type, token]: string = headers['authorization'].split(' ');
-
-    if (type !== 'Bearer') throw new HttpException('Invalid format token', HttpStatus.BAD_REQUEST);
-    if (!token) throw new HttpException('Token is missing', HttpStatus.UNAUTHORIZED);
-    
-    return token; 
+    try {
+      await checkJwt(req, res);
+      return true
+    } catch (error) {
+      throw new HttpException('check your credentials', HttpStatus.UNAUTHORIZED);
+    }
   }
 
-  private async verifyToken(token: string): Promise<object> {
-    return await this.authService.verifyToken(token);
-  }
-
-  private async checkCredentials(req: Request): Promise<boolean> {
-    console.log(req.headers);6
-    const token: string = await this.extractTokenFromHeader(req.headers);
-    const payload = await this.verifyToken(token);
-
-    req['user'] = payload;
-
-    return true;
-  }
-
-  public async canActivate(context: ExecutionContext): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();
-    const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
+    const res: Response = context.switchToHttp().getResponse();
+    const isPublic: boolean = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY,[
       context.getHandler(), context.getClass()
     ]);
 
     if (isPublic) return true;
-    
-    return await this.checkCredentials(req);
+
+    return await this.verify(req, res);
   }
 }
