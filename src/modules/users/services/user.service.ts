@@ -16,12 +16,12 @@ export class UserService {
         const body: unknown = {
             client_id: this.config.get('A_CLIENTID'),
             client_secret: this.config.get('A_SECRET'),
-            audience: `${this.config.get('A_DOMAIN')}/api/v2/`,
+            audience: `${this.config.get('A_DOMAIN')}api/v2/`,
             grant_type: "client_credentials"
         }
 
         const token = await firstValueFrom(
-            this.http.post<string>(`${this.config.get('A_DOMAIN')}/oauth/token`, body, {
+            this.http.post<string>(`${this.config.get('A_DOMAIN')}oauth/token`, body, {
                 headers: {"content-type": `application/json`}
             }).pipe(
                 catchError((error: AxiosError) => {
