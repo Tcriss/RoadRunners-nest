@@ -43,7 +43,6 @@ export class VehicleService {
             whatsapp: vehicle.whatsapp,
             telegram: vehicle.telegram
         };
-
         vehicle['portrait'] = imagesData[0];
         vehicle.images = imagesData;
         vehicle.seller = seller;
@@ -62,7 +61,7 @@ export class VehicleService {
 
         if (car.owner !== uid) throw new HttpException("You don't have permissions to do this action", HttpStatus.UNAUTHORIZED);
 
-        const res: UpdateResult = await this.vehicleRepositoy.update(id, vehicle);
+        const res: UpdateResult = await this.vehicleRepositoy.update(new ObjectId(id), vehicle);
 
         if (res.affected === 0) throw new HttpException('Vehicle not found', HttpStatus.NOT_FOUND);
 

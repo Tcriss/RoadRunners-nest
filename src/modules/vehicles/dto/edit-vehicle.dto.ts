@@ -1,4 +1,4 @@
-import { IsOptional, IsString, ValidateNested } from "class-validator";
+import { IsEmail, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 
 import { Seller } from "../entities";
 
@@ -32,10 +32,34 @@ export class EditVehicleDto {
     year: string;
     
     @IsOptional()
-    @IsString()
+    @IsNumber()
     price: number;
 
     @IsOptional()
     @ValidateNested()
     seller: Seller;
+
+    @IsOptional()
+    @IsString()
+    picture: string;
+
+    @IsOptional()
+    @IsString()
+    name: string;
+
+    @IsOptional()
+    @IsEmail()
+    email: string;
+
+    @IsOptional()
+    @IsString()
+    phone: string;
+
+    @IsOptional()
+    @IsString()
+    whatsapp: string;
+
+    @IsOptional()
+    @IsString()
+    telegram: string;
 }

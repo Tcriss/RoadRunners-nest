@@ -35,7 +35,7 @@ export class CreateVehicleDto {
     @IsNumber()
     price: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @ValidateNested()
     seller: Seller;
 
@@ -63,7 +63,7 @@ export class CreateVehicleDto {
     @IsString()
     telegram: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @ValidateNested()
     images: Image[];
 }
