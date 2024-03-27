@@ -13,13 +13,12 @@ export class VehicleController {
 
     constructor(private vehicleService: VehicleService) {}
 
-    //@PublicAccess()
     @Get()
     findAll(): Promise<Vehicle[]> {
         return this.vehicleService.findAllVehicles();
     }
 
-    @Get('vei/:id')
+    @Get(':id')
     findOne(@Param('id') id: ObjectId): Promise<Vehicle> {
         return this.vehicleService.findOneVehicle(id);
     }
