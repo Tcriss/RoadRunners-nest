@@ -1,0 +1,20 @@
+services:
+  api:
+    container_name: RoadRunners-nest
+    build: .
+    ports:
+      - 3001:3001
+    expose:
+      - 3001
+    environment:
+      URI: '${DB_URI}'
+      DEV_HOST: '${DEV_HOST}'
+      PROD_HOST: '${PROD_HOST}'
+      A_DOMAIN: '${A_DOMAIN}'
+      A_CLIENTID: '${A_CLIENTID}'
+      A_SECRET: '${A_SECRET}'
+      AUDIENCE: '${AUDIENCE}'
+      CLOUD: '${CLOUD}'
+      KEY: '${KEY}'
+      SECRET: '${SECRET}'
+      URL: '${URL}'
