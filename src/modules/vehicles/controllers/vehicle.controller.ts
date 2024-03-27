@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongodb';
 
@@ -14,8 +14,8 @@ export class VehicleController {
     constructor(private vehicleService: VehicleService) {}
 
     @Get()
-    findAll(): Promise<Vehicle[]> {
-        return this.vehicleService.findAllVehicles();
+    findAll(@Query() filters: unknown): Promise<Vehicle[]> {
+        return this.vehicleService.findAllVehicles(filters);
     }
 
     @Get(':id')

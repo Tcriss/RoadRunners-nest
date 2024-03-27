@@ -17,9 +17,10 @@ export class VehicleService {
         private readonly cloudinaryService: CloudinaryService,
     ) {}
 
-    public async findAllVehicles(): Promise<Vehicle[]> {
+    public async findAllVehicles(filters: unknown): Promise<Vehicle[]> {
         return await this.vehicleRepositoy.find({
-            select: listVehicleData
+            select: listVehicleData,
+            where: filters
         });
     }
 
