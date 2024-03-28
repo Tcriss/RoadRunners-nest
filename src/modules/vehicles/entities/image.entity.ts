@@ -1,6 +1,8 @@
 import { Column } from "typeorm";
 
-export class Image {
+import { IImage } from "../interfaces";
+
+export class Image implements IImage {
     @Column()
     id: string;
 

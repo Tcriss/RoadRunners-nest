@@ -1,7 +1,7 @@
 import { Column, Entity, ObjectIdColumn } from "typeorm";
 import { ObjectId } from "mongodb";
 
-import { IVehicle } from "src/common/interfaces";
+import { IVehicle } from "../interfaces";
 import { Seller, Image } from ".";
 
 @Entity('vehicles')

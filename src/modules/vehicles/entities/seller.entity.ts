@@ -1,7 +1,7 @@
 import { Column, ObjectIdColumn } from "typeorm";
 import { ObjectId } from "mongodb";
 
-import { ISeller } from "src/common/interfaces";
+import { ISeller } from "../interfaces";
 
 export class Seller implements ISeller {
     @ObjectIdColumn()

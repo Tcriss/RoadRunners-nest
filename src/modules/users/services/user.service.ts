@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { firstValueFrom, catchError } from 'rxjs';
 import { AxiosError, AxiosResponse } from 'axios';
 
+import { IUser } from '../interfaces/user.interface';
 import { EditUser } from '../dto/user.dto';
-import { IUser } from 'src/common/interfaces';
 
 @Injectable()
 export class UserService {
