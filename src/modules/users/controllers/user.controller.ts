@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 
 import { UserService } from '../services/user.service';
-import { IUser } from '../../vehicles/interfaces';
+import { IUser } from '../interfaces/user.interface';
 import { EditUser } from '../dto/user.dto';
 import { JwtGuard } from '../../../modules/auth/guards/jwt.guard';
 

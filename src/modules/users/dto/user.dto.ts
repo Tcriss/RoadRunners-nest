@@ -1,6 +1,6 @@
 import { IsEmail, IsOptional, IsString } from "class-validator";
 
-import { IUser } from "src/modules/vehicles/interfaces";
+import { IUser } from "../interfaces/user.interface";
 
 export class EditUser implements IUser {
     @IsOptional()
