@@ -33,10 +33,10 @@ export class UserService {
         return token.data['access_token'];
     }
 
-    public async findOneUser(id: string): Promise<IUser> {
+    public async findOneUser(uid: string): Promise<IUser> {
         const token: string = await this.getToken();
         const res: AxiosResponse<IUser> = await firstValueFrom(
-            this.http.get<IUser>(`${this.config.get('A_DOMAIN')}api/v2/users/${id}`, {
+            this.http.get<IUser>(`${this.config.get('A_DOMAIN')}api/v2/users/${uid}`, {
                 headers: {"authorization": `Bearer ${token}`}
             }).pipe(
                 catchError((error) => {
@@ -45,13 +45,15 @@ export class UserService {
             )),
         );
     
-        return res.data
+        return res.data;
     }
 
-    public async editUser(id: string, user: EditUser): Promise<unknown> {
+    public async editUser(uid: string, user: EditUser): Promise<unknown> {
+        if (!user.family_name || !user.given_name) throw new HttpException('No fields were found to update your user.', HttpStatus.BAD_REQUEST);
+
         const token: string = await this.getToken();
         const res: AxiosResponse<EditUser> = await firstValueFrom(
-            this.http.patch(`${this.config.get('A_DOMAIN')}api/v2/users/${id}`, user, {
+            this.http.patch(`${this.config.get('A_DOMAIN')}api/v2/users/${uid}`, user, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -59,11 +61,11 @@ export class UserService {
                 }
             }).pipe(
                 catchError((error: AxiosError) => {
-                  throw new HttpException(`Error while trying to update user: \n ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new HttpException(`Error while trying to update user: \n ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             )),
         );
 
-        return res.data
+        return res.data;
     }
 }

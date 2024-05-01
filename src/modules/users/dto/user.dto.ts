@@ -5,15 +5,11 @@ import { IUser } from "../interfaces/user.interface";
 export class EditUser implements IUser {
     @IsOptional()
     @IsString()
-    userId: string;
+    given_name: string;
 
     @IsOptional()
     @IsString()
-    givenName: string;
-
-    @IsOptional()
-    @IsString()
-    familyName: string;
+    family_name: string;
 
     @IsOptional()
     @IsEmail()
