@@ -1,8 +1,12 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested, isString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 
 import { Image, Seller } from "../entities";
 
 export class CreateVehicleDto {
+    @IsNotEmpty()
+    @IsString()
+    owner: string;
+
     @IsNotEmpty()
     @IsString()
     location: string;

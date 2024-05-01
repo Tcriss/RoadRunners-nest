@@ -36,7 +36,7 @@ export class UserService {
     public async findOneUser(id: string): Promise<IUser> {
         const token: string = await this.getToken();
         const res: AxiosResponse<IUser> = await firstValueFrom(
-            this.http.get<IUser>(`${this.config.get('A_DOMAIN')}/api/v2/users/${id}`, {
+            this.http.get<IUser>(`${this.config.get('A_DOMAIN')}api/v2/users/${id}`, {
                 headers: {"authorization": `Bearer ${token}`}
             }).pipe(
                 catchError((error) => {
@@ -51,7 +51,7 @@ export class UserService {
     public async editUser(id: string, user: EditUser): Promise<unknown> {
         const token: string = await this.getToken();
         const res: AxiosResponse<EditUser> = await firstValueFrom(
-            this.http.patch<EditUser>(`${this.config.get('A_DOMAIN')}/api/v2/users/${id}`, user, {
+            this.http.patch(`${this.config.get('A_DOMAIN')}api/v2/users/${id}`, user, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",

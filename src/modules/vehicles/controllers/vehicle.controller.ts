@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongodb';
 
@@ -30,7 +30,6 @@ export class VehicleController {
         return this.vehicleService.createVehicle(vehicle, images);
     }
 
-    @HttpCode(200)
     @UseGuards(JwtGuard)
     @Put('edit/:id')
     edit(@Param('id') id: ObjectId, @Body() vehicle: EditVehicleDto, @Req() req: { user: string }): Promise<string> {

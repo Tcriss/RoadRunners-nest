@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 
 import { Vehicle, Image, Seller } from '../entities';
 import { CreateVehicleDto, EditVehicleDto } from '../dto';
-import { CloudinaryService } from 'src/modules/cloudinary/services/cloudinary.service';
+import { CloudinaryService } from '../../cloudinary/services/cloudinary.service';
 import { listVehicleData, getVehicleData } from '../utils/';
 
 @Injectable()
