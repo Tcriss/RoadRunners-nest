@@ -70,6 +70,7 @@ export class VehicleService {
         if (!data) throw new HttpException("Couldn't save this vehicle", HttpStatus.NOT_FOUND);
 
         await this.vehicleRepositoy.save(data);
+        await this.cache.del('vehicle-list');
 
         return 'Vehicle saved succesfully';
     }
@@ -82,6 +83,8 @@ export class VehicleService {
         const res: UpdateResult = await this.vehicleRepositoy.update(new ObjectId(id), vehicle);
 
         if (res.affected === 0) throw new HttpException('Vehicle not found', HttpStatus.NOT_FOUND);
+
+        await this.cache.del('vehicle-list');
 
         return 'Changes saved succesfully';
     }
@@ -97,6 +100,7 @@ export class VehicleService {
         if (res.affected === 1) {
             vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
             await this.cache.del('vehicle');
+            await this.cache.del('vehicle-list');
             throw new HttpException('User deleted', HttpStatus.OK);
         };
     }
