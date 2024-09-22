@@ -1,4 +1,4 @@
-import { IImage, ISeller } from "./";
+import { IImage, ISeller } from ".";
 
 export interface IVehicle {
     portrait: IImage,

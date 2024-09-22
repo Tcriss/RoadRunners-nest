@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 
 import { UserService } from '../services/user.service';
 import { IUser } from '../interfaces/user.interface';
 import { EditUser } from '../dto/user.dto';
-import { JwtGuard } from '../../../modules/auth/guards/jwt.guard';
+import { JwtGuard } from '../../auth/guards/jwt.guard';
 
 @Controller('users')
 export class UserController {

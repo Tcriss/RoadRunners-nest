@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ObjectId } from 'mongodb';
 
-import { Vehicle, Image, Seller } from '../entities';
-import { CreateVehicleDto, EditVehicleDto } from '../dto';
-import { CloudinaryService } from '../../cloudinary/services/cloudinary.service';
-import { listVehicleData, getVehicleData } from '../utils/';
+import { Vehicle, Image, Seller } from '../../domain/entities';
+import { CreateVehicleDto, EditVehicleDto } from '../../domain/dto';
+import { CloudinaryService } from '../../../cloudinary/services/cloudinary.service';
+import { listVehicleData, getVehicleData } from '../utils';
 
 @Injectable()
 export class VehicleService {

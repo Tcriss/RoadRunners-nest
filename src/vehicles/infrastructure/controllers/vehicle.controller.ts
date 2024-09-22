@@ -2,11 +2,11 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFi
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongodb';
 
-import { Vehicle } from '../entities';
-import { CreateVehicleDto, EditVehicleDto } from '../dto';
-import { VehicleService } from '../services/vehicle.service';
-import { imageValidations } from '../config/image-validations.config';
-import { JwtGuard } from '../../../modules/auth/guards/jwt.guard';
+import { Vehicle } from '../../domain/entities';
+import { CreateVehicleDto, EditVehicleDto } from '../../domain/dto';
+import { VehicleService } from '../../application/services/vehicle.service';
+import { imageValidations } from '../../application/config/image-validations.config';
+import { JwtGuard } from '../../../auth/guards/jwt.guard';
 
 @Controller('vehicles')
 export class VehicleController {

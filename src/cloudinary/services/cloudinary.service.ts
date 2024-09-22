@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UploadStream, v2 as cloudinary } from 'cloudinary';
 import * as streamifier from 'streamifier';
 
-import { Image } from 'src/modules/vehicles/entities/image.entity';
+import { Image } from '../../vehicles/domain/entities';
 
 @Injectable()
 export class CloudinaryService {
