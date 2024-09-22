@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 
-import { AuthStrategy } from './providers/auth.strategy';
+import { AuthStrategy } from './application/providers/auth.strategy';
 
 @Module({
     providers: [ AuthStrategy ],

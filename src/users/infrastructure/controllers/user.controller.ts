@@ -3,7 +3,7 @@ import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UserService } from '../../application/services/user.service';
 import { IUser } from '../../domain/interfaces';
 import { EditUserDto } from '../../domain/dto';
-import { JwtGuard } from '../../../auth/guards/jwt.guard';
+import { JwtGuard } from '../../../auth/application/guards/jwt.guard';
 
 @UseGuards(JwtGuard)
 @Controller('users')

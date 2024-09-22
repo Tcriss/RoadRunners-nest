@@ -6,7 +6,7 @@ import { Vehicle } from '../../domain/entities';
 import { CreateVehicleDto, EditVehicleDto } from '../../domain/dto';
 import { VehicleService } from '../../application/services/vehicle.service';
 import { imageValidations } from '../../application/config/image-validations.config';
-import { JwtGuard } from '../../../auth/guards/jwt.guard';
+import { JwtGuard } from '../../../auth/application/guards/jwt.guard';
 
 @Controller('vehicles')
 export class VehicleController {
