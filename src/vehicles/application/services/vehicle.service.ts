@@ -1,6 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ObjectId } from 'mongodb';
 
 import { Vehicle, Image, Seller } from '../../domain/entities';
@@ -14,20 +15,37 @@ export class VehicleService {
     constructor(
         @InjectRepository(Vehicle) 
         private readonly vehicleRepositoy: Repository<Vehicle>,
+        @Inject(CACHE_MANAGER) private readonly cache: Cache,
         private readonly cloudinaryService: CloudinaryService,
     ) {}
 
     public async findAllVehicles(filters: unknown): Promise<Vehicle[]> {
-        return await this.vehicleRepositoy.find({
+        const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
+
+        if (cachedVehicles !== null) return cachedVehicles;
+
+        const vehicles = await this.vehicleRepositoy.find({
             select: listVehicleData,
             where: filters
         });
+        await this.cache.set('vehicle_list', vehicles);
+
+        return vehicles;
     }
 
     public async findOneVehicle(id: ObjectId): Promise<Vehicle> {
-        const vehicle: Vehicle = await this.vehicleRepositoy.findOne({where: {_id: new ObjectId(id)}, select: getVehicleData});
+        const cachedResutl: Vehicle = await this.cache.get('vehicle');
+
+        if (cachedResutl || cachedResutl._id !== id) return cachedResutl;
+
+        const vehicle: Vehicle = await this.vehicleRepositoy.findOne({
+            where: {_id: new ObjectId(id)},
+            select: getVehicleData
+        });
 
         if (!vehicle) throw new HttpException('Vehicle not found', HttpStatus.NOT_FOUND);
+
+        this.cache.set('vehicle', vehicle);
 
         return vehicle;
     }
@@ -78,7 +96,7 @@ export class VehicleService {
         if (res.affected === 0) throw new HttpException('Oops!, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
         if (res.affected === 1) {
             vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
-
+            await this.cache.del('vehicle');
             throw new HttpException('User deleted', HttpStatus.OK);
         };
     }

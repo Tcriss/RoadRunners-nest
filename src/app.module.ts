@@ -2,17 +2,27 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { UsersModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
 import { Environment } from './common/application/enums';
 import { rateLimitConfig } from './common/application/config/rate-limit.config';
+import { redisConfig } from './common/application/config/redis.config';
 
 @Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
         type: 'mongodb',
@@ -27,6 +37,12 @@ import { rateLimitConfig } from './common/application/config/rate-limit.config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: rateLimitConfig
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: redisConfig
     }),
     VehiclesModule, 
     UsersModule,
