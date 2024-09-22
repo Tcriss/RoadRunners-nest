@@ -34,9 +34,9 @@ export class VehicleService {
     }
 
     public async findOneVehicle(id: ObjectId): Promise<Vehicle> {
-        const cachedResutl: Vehicle = await this.cache.get('vehicle');
+        const cachedResult: Vehicle = await this.cache.get('vehicle');
 
-        if (cachedResutl || cachedResutl._id !== id) return cachedResutl;
+        if (cachedResult && cachedResult._id === id) return cachedResult;
 
         const vehicle: Vehicle = await this.vehicleRepositoy.findOne({
             where: {_id: new ObjectId(id)},
