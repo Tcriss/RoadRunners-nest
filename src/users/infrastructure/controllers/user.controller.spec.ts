@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
 
 import { UserController } from './user.controller';
-import { UserService } from '../services/user.service';
-import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
+import { UserService } from '../../services/user.service';
+import { CloudinaryModule } from '../../../cloudinary/cloudinary.module';
 
 describe('UserController', () => {
   let controller: UserController;

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
 
 import { UserService } from './user.service';
-import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
+import { CloudinaryModule } from '../../../cloudinary/cloudinary.module';
 
 describe('UserService', () => {
   let service: UserService;
