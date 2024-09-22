@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { validationConfig } from './common/config/validation.config';
+import { validationConfig } from './common/application/config/validation.config';
 
 import { AppModule } from './app.module';
-import { appConfig } from './common/config/app.config';
-import { corsConfig } from './common/config/cors.config';
+import { appConfig } from './common/application/config/app.config';
+import { corsConfig } from './common/application/config/cors.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, appConfig);
