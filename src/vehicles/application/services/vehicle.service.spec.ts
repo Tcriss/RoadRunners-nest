@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CacheModule } from '@nestjs/cache-manager';
 
 import { VehicleService } from './vehicle.service';
 import { Image, Seller, Vehicle } from '../../domain/entities';
@@ -15,7 +16,8 @@ describe('VehicleService', () => {
       imports: [
         ConfigModule,
         TypeOrmModule.forFeature([Vehicle, Seller, Image]),
-        CloudinaryModule
+        CloudinaryModule,
+        CacheModule.register({})
       ]
 
     }).compile();
