@@ -1,15 +1,49 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
-import { ConnectionProvider } from './connection/connection.provider';
-import { VehiclesModule } from './modules/vehicles/vehicles.module';
-import { UsersModule } from './modules/users/user.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { UsersModule } from './users/user.module';
+import { AuthModule } from './auth/auth.module';
+import { Environment } from './common/application/enums';
+import { rateLimitConfig } from './common/application/config/rate-limit.config';
+import { redisConfig } from './common/application/config/redis.config';
 
 @Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
-    ConnectionProvider,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        type: 'mongodb',
+        url: config.get('DB_URI'),
+        ssl: true,
+        autoLoadEntities: true,
+        synchronize: config.get('NODE_ENV') !== Environment.Production,
+        logging: true
+      })
+    }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: rateLimitConfig
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: redisConfig
+    }),
     VehiclesModule, 
     UsersModule,
     AuthModule,
