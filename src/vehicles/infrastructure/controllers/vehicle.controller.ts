@@ -38,7 +38,7 @@ export class VehicleController {
 
     @UseGuards(JwtGuard)
     @Delete('delete/:id')
-    delete(@Param('id') id: ObjectId, @Req() req: { user: string }): Promise<void> {
-        return this.vehicleService.deleteVehcile(id, req.user);
+    delete(@Param('id') id: ObjectId, @Req() req: { user: string }): Promise<string> {
+        return this.vehicleService.deleteVehicle(id, req.user);
     }
 }

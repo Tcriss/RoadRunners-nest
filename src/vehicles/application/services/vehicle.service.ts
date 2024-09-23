@@ -19,7 +19,7 @@ export class VehicleService {
         private readonly cloudinaryService: CloudinaryService,
     ) {}
 
-    public async findAllVehicles(filters: unknown): Promise<Vehicle[]> {
+    public async findAllVehicles(filters?: unknown): Promise<Vehicle[]> {
         const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
 
         if (cachedVehicles !== null) return cachedVehicles;
@@ -89,7 +89,7 @@ export class VehicleService {
         return 'Changes saved succesfully';
     }
 
-    public async deleteVehcile(id: ObjectId, uid: string): Promise<void> {
+    public async deleteVehicle(id: ObjectId, uid: string): Promise<string> {
         const vehicle: Vehicle = await this.findOneVehicle(id);
 
         if (vehicle.owner !== uid) throw new HttpException("You don't have permissions to do this action", HttpStatus.UNAUTHORIZED);
@@ -97,11 +97,11 @@ export class VehicleService {
         const res: DeleteResult = await this.vehicleRepositoy.delete(new ObjectId(id));
 
         if (res.affected === 0) throw new HttpException('Oops!, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-        if (res.affected === 1) {
-            vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
-            await this.cache.del('vehicle');
-            await this.cache.del('vehicle-list');
-            throw new HttpException('User deleted', HttpStatus.OK);
-        };
+        
+        vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
+        await this.cache.del('vehicle');
+        await this.cache.del('vehicle-list');
+        throw new HttpException('Vehicle deleted', HttpStatus.OK);
+        
     }
 }
