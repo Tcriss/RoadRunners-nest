@@ -79,7 +79,7 @@ describe('VehicleService', () => {
       expect(res).toBe(vehicleMocks[0]);
     });
 
-    it('should return cached data if possibel', async () => {
+    it('should return cached data', async () => {
       jest.spyOn(cache, 'get').mockResolvedValue(vehicleMocks[2]);
       jest.spyOn(repository, 'findOne').mockResolvedValue(vehicleMocks[0]);
 
@@ -117,8 +117,8 @@ describe('VehicleService', () => {
         { id: '001', url: 'image-url-1' },
         { id: '002', url: 'image-url-2' }
       ]);
-      jest.spyOn(repository, 'create').mockImplementation(() => Promise.resolve(vehicleMocks[3]));
-      jest.spyOn(repository, 'save').mockRejectedValue(vehicleMocks[3]);
+      jest.spyOn(repository, 'create').mockResolvedValue(vehicleMocks[3] as never);
+      jest.spyOn(repository, 'save').mockResolvedValue(vehicleMocks[3]);
 
       const res = await service.createVehicle({
         brand: vehicleMocks[3].brand,
@@ -146,7 +146,6 @@ describe('VehicleService', () => {
         { id: '001', url: 'image-url-1' },
         { id: '002', url: 'image-url-2' }
       ]);
-      //jest.spyOn(repository, 'create').mockResolvedValue(null);
 
       try {
         await service.createVehicle({
@@ -176,7 +175,8 @@ describe('VehicleService', () => {
 
   describe('Update', () => {
     it('should update a vehicle', async () => {
-      jest.spyOn(repository, 'update').mockImplementation(() => Promise.resolve({ raw: '',affected: 0, generatedMaps: [] }));
+      jest.spyOn(repository, 'findOne').mockResolvedValue(vehicleMocks[0]);
+      jest.spyOn(repository, 'update').mockImplementation(() => Promise.resolve({ raw: '',affected: 1, generatedMaps: [] }));
 
       const res = await service.editVehicle(vehicleMocks[0]._id,{
         brand: vehicleMocks[3].brand,
@@ -199,7 +199,8 @@ describe('VehicleService', () => {
     });
 
     it('shpuld not update if not the owner', async () => {
-      jest.spyOn(repository, 'update').mockImplementation(() => Promise.resolve({ raw: '',affected: 0, generatedMaps: [] }));
+      jest.spyOn(repository, 'findOne').mockResolvedValue(vehicleMocks[3]);
+      jest.spyOn(repository, 'update').mockImplementation(() => Promise.resolve({ raw: '',affected: 1, generatedMaps: [] }));
       
       try {
         await service.editVehicle(vehicleMocks[0]._id,{
@@ -221,13 +222,14 @@ describe('VehicleService', () => {
       } catch(err) {
         expect(err).toBeInstanceOf(HttpException);
         expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe("Youd don't have permissions to do this action")
+        expect(err.message).toBe('You do not have permissions')
       };
     });
   });
 
   describe('Delete', () => {
     it('should delete a vehicle', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(vehicleMocks[0]);
       jest.spyOn(repository, 'delete').mockResolvedValue({
         raw: '',
         affected: 1
@@ -238,18 +240,31 @@ describe('VehicleService', () => {
       expect(res).toBe('Vehicle deleted');
     });
 
-    it('should not delete if your not the owner', async () => {
+    it('should not delete if you are not the owner', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(vehicleMocks[1]);
+
+      try {
+        await service.deleteVehicle(vehicleMocks[1]._id, vehicleMocks[0].owner);
+      } catch (err) {
+        expect(err).toBeInstanceOf(HttpException);
+        expect(err.status).toBe(HttpStatus.FORBIDDEN);
+        expect(err.message).toBe('You do not have permissions');
+      }
+    });
+
+    it('should throw an exception if vehicle could not be deleted', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(vehicleMocks[1]);
       jest.spyOn(repository, 'delete').mockResolvedValue({
         raw: '',
         affected: 0
       });
 
       try {
-        await service.deleteVehicle(vehicleMocks[0]._id, vehicleMocks[0].owner);
+        await service.deleteVehicle(vehicleMocks[1]._id, vehicleMocks[1].owner);
       } catch (err) {
         expect(err).toBeInstanceOf(HttpException);
-        expect(err.status).toBe(HttpStatus.FORBIDDEN);
-        expect(err.message).toBe('You do not have permissions');
+        expect(err.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+        expect(err.message).toBe('Oops!, something went wrong');
       }
     });
   });

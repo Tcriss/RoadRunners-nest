@@ -14,7 +14,7 @@ export class VehicleController {
     constructor(private vehicleService: VehicleService) {}
 
     @Get()
-    findAll(@Query() filters: unknown): Promise<Vehicle[]> {
+    findAll(@Query() filters?: unknown): Promise<Vehicle[]> {
         return this.vehicleService.findAllVehicles(filters);
     }
 

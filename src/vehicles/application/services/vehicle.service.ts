@@ -50,7 +50,7 @@ export class VehicleService {
         return vehicle;
     }
 
-    public async createVehicle(vehicle: CreateVehicleDto, images: Express.Multer.File[]): Promise<string | any> {
+    public async createVehicle(vehicle: CreateVehicleDto, images: Express.Multer.File[]): Promise<string> {
         const imagesData: Image[] = await this.cloudinaryService.uploadFiles(images);
         const seller: Seller = {
             _id: new ObjectId(),
@@ -78,7 +78,7 @@ export class VehicleService {
     public async editVehicle(id: ObjectId, vehicle: EditVehicleDto, uid: string): Promise<string> {
         const car: Vehicle = await this.findOneVehicle(id);
 
-        if (car.owner !== uid) throw new HttpException("You don't have permissions to do this action", HttpStatus.UNAUTHORIZED);
+        if (car.owner !== uid) throw new HttpException('You do not have permissions', HttpStatus.FORBIDDEN);
 
         const res: UpdateResult = await this.vehicleRepositoy.update(new ObjectId(id), vehicle);
 
@@ -92,7 +92,7 @@ export class VehicleService {
     public async deleteVehicle(id: ObjectId, uid: string): Promise<string> {
         const vehicle: Vehicle = await this.findOneVehicle(id);
 
-        if (vehicle.owner !== uid) throw new HttpException("You don't have permissions to do this action", HttpStatus.UNAUTHORIZED);
+        if (vehicle.owner !== uid) throw new HttpException('You do not have permissions', HttpStatus.FORBIDDEN);
 
         const res: DeleteResult = await this.vehicleRepositoy.delete(new ObjectId(id));
 
@@ -101,7 +101,7 @@ export class VehicleService {
         vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
         await this.cache.del('vehicle');
         await this.cache.del('vehicle-list');
-        throw new HttpException('Vehicle deleted', HttpStatus.OK);
-        
+
+        return 'Vehicle deleted';
     }
 }
