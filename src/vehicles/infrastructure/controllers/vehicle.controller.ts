@@ -16,12 +16,12 @@ export class VehicleController {
 
     @Get()
     findAll(@Query() params: IParams): Promise<Vehicle[]> {
-        const { take, skip, ...filters } = params;
+        const { page, limit, ...filters } = params;
 
         return this.vehicleService.findAllVehicles(
             {
-                take: +take,
-                skip: +skip
+                skip: (page - 1) * limit,
+                take: +limit || 10
             },
             filters
         );

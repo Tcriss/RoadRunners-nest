@@ -21,16 +21,15 @@ export class VehicleService {
     ) {}
 
     public async findAllVehicles(pagination: IPagination, filters?: IFilter): Promise<Vehicle[]> {
-        const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
+        // const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
 
-        if (cachedVehicles !== null) return cachedVehicles;
+        // if (cachedVehicles !== null) return cachedVehicles;
 
-        const { take, skip } = pagination;
         const vehicles = await this.vehicleRepositoy.find({
             select: listVehicleData,
             where: filters,
-            take,
-            skip
+            take: pagination.take || 10,
+            skip: pagination.skip || 0
         });
         await this.cache.set('vehicle_list', vehicles);
 
