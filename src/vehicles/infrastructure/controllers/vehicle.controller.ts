@@ -3,6 +3,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongodb';
 
 import { Vehicle } from '../../domain/entities';
+import { IParams } from '../../domain/interfaces';
 import { CreateVehicleDto, EditVehicleDto } from '../../domain/dto';
 import { VehicleService } from '../../application/services/vehicle.service';
 import { imageValidations } from '../../application/config/image-validations.config';
@@ -14,8 +15,16 @@ export class VehicleController {
     constructor(private vehicleService: VehicleService) {}
 
     @Get()
-    findAll(@Query() filters?: unknown): Promise<Vehicle[]> {
-        return this.vehicleService.findAllVehicles(filters);
+    findAll(@Query() params: IParams): Promise<Vehicle[]> {
+        const { take, skip, ...filters } = params;
+
+        return this.vehicleService.findAllVehicles(
+            {
+                take: +take,
+                skip: +skip
+            },
+            filters
+        );
     }
 
     @Get(':id')

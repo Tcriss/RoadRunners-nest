@@ -19,4 +19,10 @@ describe('UserService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('Get Token', () => {});
+
+  describe('Get User', () => {});
+
+  describe('Edit User', () => {});
 });

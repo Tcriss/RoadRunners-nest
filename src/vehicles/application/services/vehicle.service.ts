@@ -5,9 +5,10 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ObjectId } from 'mongodb';
 
 import { Vehicle, Image, Seller } from '../../domain/entities';
+import { IFilter, IPagination } from '../../domain/interfaces';
 import { CreateVehicleDto, EditVehicleDto } from '../../domain/dto';
-import { CloudinaryService } from '../../../cloudinary/application/services/cloudinary.service';
 import { listVehicleData, getVehicleData } from '../utils';
+import { CloudinaryService } from '../../../cloudinary/application/services/cloudinary.service';
 
 @Injectable()
 export class VehicleService {
@@ -19,14 +20,17 @@ export class VehicleService {
         private readonly cloudinaryService: CloudinaryService,
     ) {}
 
-    public async findAllVehicles(filters?: unknown): Promise<Vehicle[]> {
+    public async findAllVehicles(pagination: IPagination, filters?: IFilter): Promise<Vehicle[]> {
         const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
 
         if (cachedVehicles !== null) return cachedVehicles;
 
+        const { take, skip } = pagination;
         const vehicles = await this.vehicleRepositoy.find({
             select: listVehicleData,
-            where: filters
+            where: filters,
+            take,
+            skip
         });
         await this.cache.set('vehicle_list', vehicles);
 
