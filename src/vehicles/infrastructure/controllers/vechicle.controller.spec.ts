@@ -33,7 +33,7 @@ describe('Vehicle Controller', () => {
         it('should fetch all vehicles', async () => {
             jest.spyOn(service, 'findAllVehicles').mockImplementation(() => Promise.resolve(vehicleMocks));
 
-            const res = await controller.findAll();
+            const res = await controller.findAll({ page: 1 });
 
             expect(res).toBe(vehicleMocks);
         });
@@ -41,7 +41,7 @@ describe('Vehicle Controller', () => {
         it('should fetch all vehicles by query params', async () => {
             jest.spyOn(service, 'findAllVehicles').mockImplementation(() => Promise.resolve([ vehicleMocks[0] ]));
 
-            const res = await controller.findAll({ type: 'Jeepeta' });
+            const res = await controller.findAll({ page: 1, type: 'Jeepeta' });
 
             expect(res).toStrictEqual([ vehicleMocks[0] ]);
             expect(res[0].type).toBe('Jeepeta');

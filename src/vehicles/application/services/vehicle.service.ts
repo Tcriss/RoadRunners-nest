@@ -20,7 +20,7 @@ export class VehicleService {
         private readonly cloudinaryService: CloudinaryService,
     ) {}
 
-    public async findAllVehicles(pagination: IPagination, filters?: IFilter): Promise<Vehicle[]> {
+    public async findAllVehicles(pagination: IPagination, filters?: Partial<IFilter>): Promise<Vehicle[]> {
         // const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
 
         // if (cachedVehicles !== null) return cachedVehicles;

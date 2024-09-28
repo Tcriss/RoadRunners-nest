@@ -1,6 +1,6 @@
 import { IFilter } from "./filter.interface";
 
-export interface IParams extends IFilter {
+export interface IParams extends Partial<IFilter> {
     page: number;
     limit?: number;
 }

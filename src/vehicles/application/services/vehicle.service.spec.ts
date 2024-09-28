@@ -51,7 +51,10 @@ describe('VehicleService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue(vehicleMocks);
       jest.spyOn(cache, 'get').mockResolvedValue(null);
 
-      const res = await service.findAllVehicles();
+      const res = await service.findAllVehicles({
+        take: 10,
+        skip: 0
+      });
 
       expect(res).toEqual(vehicleMocks);
     });
@@ -60,9 +63,15 @@ describe('VehicleService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([ vehicleMocks[1] ]);
       jest.spyOn(cache, 'get').mockResolvedValue(null);
 
-      const res = await service.findAllVehicles({
-        type: 'Sedán'
-      });
+      const res = await service.findAllVehicles(
+        {
+          take: 10,
+          skip: 0
+        },
+        {
+          type: 'Sedán'
+        }
+      );
 
       expect(res).toStrictEqual([ vehicleMocks[1] ]);
       expect(res[0].type).toBe('Sedán');
