@@ -1,18 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
 
 import { UserController } from './user.controller';
-import { UserService } from '../../services/user.service';
-import { CloudinaryModule } from '../../../cloudinary/cloudinary.module';
+import { UserService } from '../../application/services/user.service';
+import { userServiceMock } from '../../domain/mocks';
 
 describe('UserController', () => {
   let controller: UserController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        {
+          provide: UserService,
+          useValue: userServiceMock
+        }
+      ],
       controllers: [UserController],
-      providers: [UserService],
-      imports: [ConfigModule, CloudinaryModule]
     }).compile();
 
     controller = module.get<UserController>(UserController);
