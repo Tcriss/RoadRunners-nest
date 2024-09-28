@@ -21,10 +21,17 @@ export class VehicleService {
     ) {}
 
     public async findAllVehicles(pagination: IPagination, filters?: Partial<IFilter>): Promise<Vehicle[]> {
-        // const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
+        const cachedPagination: IPagination = await this.cache.get('pagination');
+        const cachedFilters: Partial<IFilter> = await this.cache.get('filters');
+        const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
 
-        // if (cachedVehicles !== null) return cachedVehicles;
+        if (
+            cachedVehicles &&
+            cachedPagination === pagination &&
+            cachedFilters === filters
+        ) return cachedVehicles;
 
+        await this.cache.reset();
         const vehicles = await this.vehicleRepositoy.find({
             select: listVehicleData,
             where: filters,
@@ -73,7 +80,7 @@ export class VehicleService {
         if (!data) throw new HttpException("Couldn't save this vehicle", HttpStatus.NOT_FOUND);
 
         await this.vehicleRepositoy.save(data);
-        await this.cache.del('vehicle-list');
+        await this.cache.reset();
 
         return 'Vehicle saved succesfully';
     }
@@ -87,7 +94,7 @@ export class VehicleService {
 
         if (res.affected === 0) throw new HttpException('Vehicle not found', HttpStatus.NOT_FOUND);
 
-        await this.cache.del('vehicle-list');
+        await this.cache.reset();
 
         return 'Changes saved succesfully';
     }
@@ -102,8 +109,7 @@ export class VehicleService {
         if (res.affected === 0) throw new HttpException('Oops!, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
         
         vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
-        await this.cache.del('vehicle');
-        await this.cache.del('vehicle-list');
+        await this.cache.reset();
 
         return 'Vehicle deleted';
     }
