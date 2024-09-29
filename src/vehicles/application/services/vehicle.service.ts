@@ -5,9 +5,10 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ObjectId } from 'mongodb';
 
 import { Vehicle, Image, Seller } from '../../domain/entities';
+import { IFilter, IPagination } from '../../domain/interfaces';
 import { CreateVehicleDto, EditVehicleDto } from '../../domain/dto';
-import { CloudinaryService } from '../../../cloudinary/application/services/cloudinary.service';
 import { listVehicleData, getVehicleData } from '../utils';
+import { CloudinaryService } from '../../../cloudinary/application/services/cloudinary.service';
 
 @Injectable()
 export class VehicleService {
@@ -19,14 +20,23 @@ export class VehicleService {
         private readonly cloudinaryService: CloudinaryService,
     ) {}
 
-    public async findAllVehicles(filters: unknown): Promise<Vehicle[]> {
+    public async findAllVehicles(pagination: IPagination, filters?: Partial<IFilter>): Promise<Vehicle[]> {
+        const cachedPagination: IPagination = await this.cache.get('pagination');
+        const cachedFilters: Partial<IFilter> = await this.cache.get('filters');
         const cachedVehicles: Vehicle[] = await this.cache.get('vehicle_list');
 
-        if (cachedVehicles !== null) return cachedVehicles;
+        if (
+            cachedVehicles &&
+            cachedPagination === pagination &&
+            cachedFilters === filters
+        ) return cachedVehicles;
 
+        await this.cache.reset();
         const vehicles = await this.vehicleRepositoy.find({
             select: listVehicleData,
-            where: filters
+            where: filters,
+            take: pagination.take || 10,
+            skip: pagination.skip || 0
         });
         await this.cache.set('vehicle_list', vehicles);
 
@@ -50,7 +60,7 @@ export class VehicleService {
         return vehicle;
     }
 
-    public async createVehicle(vehicle: CreateVehicleDto, images: Express.Multer.File[]): Promise<string | any> {
+    public async createVehicle(vehicle: CreateVehicleDto, images: Express.Multer.File[]): Promise<string> {
         const imagesData: Image[] = await this.cloudinaryService.uploadFiles(images);
         const seller: Seller = {
             _id: new ObjectId(),
@@ -70,7 +80,7 @@ export class VehicleService {
         if (!data) throw new HttpException("Couldn't save this vehicle", HttpStatus.NOT_FOUND);
 
         await this.vehicleRepositoy.save(data);
-        await this.cache.del('vehicle-list');
+        await this.cache.reset();
 
         return 'Vehicle saved succesfully';
     }
@@ -78,30 +88,29 @@ export class VehicleService {
     public async editVehicle(id: ObjectId, vehicle: EditVehicleDto, uid: string): Promise<string> {
         const car: Vehicle = await this.findOneVehicle(id);
 
-        if (car.owner !== uid) throw new HttpException("You don't have permissions to do this action", HttpStatus.UNAUTHORIZED);
+        if (car.owner !== uid) throw new HttpException('You do not have permissions', HttpStatus.FORBIDDEN);
 
         const res: UpdateResult = await this.vehicleRepositoy.update(new ObjectId(id), vehicle);
 
         if (res.affected === 0) throw new HttpException('Vehicle not found', HttpStatus.NOT_FOUND);
 
-        await this.cache.del('vehicle-list');
+        await this.cache.reset();
 
         return 'Changes saved succesfully';
     }
 
-    public async deleteVehcile(id: ObjectId, uid: string): Promise<void> {
+    public async deleteVehicle(id: ObjectId, uid: string): Promise<string> {
         const vehicle: Vehicle = await this.findOneVehicle(id);
 
-        if (vehicle.owner !== uid) throw new HttpException("You don't have permissions to do this action", HttpStatus.UNAUTHORIZED);
+        if (vehicle.owner !== uid) throw new HttpException('You do not have permissions', HttpStatus.FORBIDDEN);
 
         const res: DeleteResult = await this.vehicleRepositoy.delete(new ObjectId(id));
 
         if (res.affected === 0) throw new HttpException('Oops!, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-        if (res.affected === 1) {
-            vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
-            await this.cache.del('vehicle');
-            await this.cache.del('vehicle-list');
-            throw new HttpException('User deleted', HttpStatus.OK);
-        };
+        
+        vehicle.images.map(image => this.cloudinaryService.deleteFile(image.id));
+        await this.cache.reset();
+
+        return 'Vehicle deleted';
     }
 }

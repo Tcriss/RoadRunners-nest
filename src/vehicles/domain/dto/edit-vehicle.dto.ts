@@ -72,9 +72,9 @@ export class EditVehicleDto {
     @IsOptional()
     @IsString()
     @Matches('^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$')
-    whatsapp: string;
+    whatsapp?: string;
 
     @IsOptional()
     @IsString()
-    telegram: string;
+    telegram?: string;
 }

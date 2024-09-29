@@ -3,6 +3,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongodb';
 
 import { Vehicle } from '../../domain/entities';
+import { IParams } from '../../domain/interfaces';
 import { CreateVehicleDto, EditVehicleDto } from '../../domain/dto';
 import { VehicleService } from '../../application/services/vehicle.service';
 import { imageValidations } from '../../application/config/image-validations.config';
@@ -14,8 +15,16 @@ export class VehicleController {
     constructor(private vehicleService: VehicleService) {}
 
     @Get()
-    findAll(@Query() filters: unknown): Promise<Vehicle[]> {
-        return this.vehicleService.findAllVehicles(filters);
+    findAll(@Query() params: IParams): Promise<Vehicle[]> {
+        const { page, limit, ...filters } = params;
+
+        return this.vehicleService.findAllVehicles(
+            {
+                skip: (page - 1) * limit,
+                take: +limit || 10
+            },
+            filters
+        );
     }
 
     @Get(':id')
@@ -38,7 +47,7 @@ export class VehicleController {
 
     @UseGuards(JwtGuard)
     @Delete('delete/:id')
-    delete(@Param('id') id: ObjectId, @Req() req: { user: string }): Promise<void> {
-        return this.vehicleService.deleteVehcile(id, req.user);
+    delete(@Param('id') id: ObjectId, @Req() req: { user: string }): Promise<string> {
+        return this.vehicleService.deleteVehicle(id, req.user);
     }
 }

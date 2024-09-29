@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheModule } from '@nestjs/cache-manager';
 
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { UsersModule } from './users/user.module';
@@ -13,12 +12,6 @@ import { rateLimitConfig } from './common/application/config/rate-limit.config';
 import { redisConfig } from './common/application/config/redis.config';
 
 @Module({
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
-  ],
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({

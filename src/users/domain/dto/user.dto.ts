@@ -1,23 +1,21 @@
 import { IsEmail, IsOptional, IsString, Matches } from 'class-validator';
 
-import { IUser } from '../interfaces';
-
-export class EditUserDto implements IUser {
+export class EditUserDto {
     @IsOptional()
     @IsString()
     @Matches('^[A-Za-zñÑ ]+$')
-    given_name: string;
+    given_name?: string;
 
     @IsOptional()
     @IsString()
     @Matches('^[A-Za-zñÑ ]+$')
-    family_name: string;
+    family_name?: string;
 
     @IsOptional()
     @IsEmail()
-    email: string;
+    email?: string;
 
     @IsOptional()
     @IsString()
-    picture: string;
+    picture?: string;
 }
